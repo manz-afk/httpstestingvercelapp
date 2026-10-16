@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>.</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000 url('https://u.pone.rs/bexnldxh.jpg') center/cover no-repeat fixed;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    padding: 20px;
+    overflow: hidden;
+  }
+
+  #baitBtn {
+    padding: 22px 35px;
+    font-size: clamp(1rem, 4vw, 1.4rem);
+    font-weight: bold;
+    letter-spacing: 1px;
+    color: #fff;
+    background: linear-gradient(45deg, #ff0055, #ff8800);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 0 25px rgba(255, 0, 85, 0.8);
+    animation: pulse 1s infinite;
+    user-select: none;
+    max-width: 90%;
+    text-align: center;
+    transition: opacity 0.3s;
+  }
+
+  #baitBtn:disabled {
+    opacity: 0.5;
+    cursor: wait;
+    animation: none;
+  }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(255,0,85,0.7); transform: scale(1); }
+    50%      { box-shadow: 0 0 45px rgba(255,0,85,1);   transform: scale(1.03); }
+  }
+
+  #baitBtn:active { transform: scale(0.95); }
+
+  /* ---------- LAYAR PRANK ---------- */
+  #prank {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    background: #000 url('https://u.pone.rs/uafagygl.jpg') center/cover no-repeat;
+    background-size: cover;
+    animation: strobo 0.12s infinite alternate;
+  }
+
+  #prank.on { display: flex; }
+
+  /* Strobe: redup terang bolak-balik */
+  @keyframes strobo {
+    from { filter: brightness(0.25) contrast(1.4); }
+    to   { filter: brightness(1.6)  contrast(1.2); }
+  }
+
+  /* Efek goyang */
+  .shake { animation: shake 0.15s infinite, strobo 0.12s infinite alternate; }
+
+  @keyframes shake {
+    0%   { transform: translate(0, 0) rotate(0deg); }
+    25%  { transform: translate(-8px, 5px) rotate(-2deg); }
+    50%  { transform: translate(8px, -5px) rotate(2deg); }
+    75%  { transform: translate(-5px, -8px) rotate(-1deg); }
+    100% { transform: translate(5px, 8px) rotate(1deg); }
+  }
+
+  #prankText {
+    font-size: clamp(1.8rem, 10vw, 5rem);
+    font-weight: 900;
+    letter-spacing: 3px;
+    text-align: center;
+    user-select: none;
+    color: #fff;
+    text-shadow: 0 0 20px #000, 0 0 30px #ff0055, 2px 2px 8px #000;
+    padding: 0 20px;
+    animation: textPulse 0.3s infinite alternate;
+  }
+
+  @keyframes textPulse {
+    from { transform: scale(0.95); opacity: 0.85; }
+    to   { transform: scale(1.05); opacity: 1; }
+  }
+</style>
+</head>
+<body>
+
+  <button id="baitBtn" disabled>🔥 LANJUT KE LINK BOKEP VIRAL 🔥</button>
+  <div id="prank">
+    <span id="prankText">ADMIN BOKEP NGAPAIN JIR🗿</span>
+  </div>
+
+<script>
+(function () {
+  const AUDIO_URL = 'https://files.catbox.moe/v4xhhd.mp3';
+  const btn       = document.getElementById('baitBtn');
+  const prank     = document.getElementById('prank');
+
+  let audio         = null;
+  let audioReady    = false;
+  let running       = false;
+  let vibInterval   = null;
+
+  /* ---------- PRELOAD AUDIO ---------- */
+  function preloadAudio() {
+    audio = new Audio();
+    audio.src         = AUDIO_URL;
+    audio.loop        = true;
+    audio.volume      = 1.0;
+    audio.preload     = 'auto';
+    audio.crossOrigin = 'anonymous';
+
+    audio.addEventListener('canplaythrough', () => {
+      audioReady = true;
+      btn.disabled = false;
+    });
+
+    audio.addEventListener('canplay', () => {
+      if (!audioReady) {
+        audioReady = true;
+        btn.disabled = false;
+      }
+    });
+
+    audio.addEventListener('error', () => {
+      btn.disabled = false;
+    });
+
+    audio.load();
+  }
+
+  /* ---------- MULAI PRANK ---------- */
+  function startPrank() {
+    if (running) return;
+    running = true;
+
+    btn.style.display = 'none';
+
+    if (audio) {
+      audio.currentTime = 0;
+      audio.play().catch(e => console.warn('Gagal play:', e));
+    }
+
+    const el = document.documentElement;
+    if (el.requestFullscreen)            el.requestFullscreen().catch(()=>{});
+    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+
+    if (navigator.vibrate) {
+      const pola = [200, 100, 200, 100, 400];
+      navigator.vibrate(pola);
+      vibInterval = setInterval(() => navigator.vibrate(pola), 1000);
+    }
+
+    // Tampilkan layar prank + goyang
+    prank.classList.add('on', 'shake');
+  }
+
+  function stopPrank() {
+    running = false;
+    if (audio) { audio.pause(); audio.currentTime = 0; }
+    if (navigator.vibrate) navigator.vibrate(0);
+    clearInterval(vibInterval);
+    prank.classList.remove('on', 'shake');
+    if (document.fullscreenElement) document.exitFullscreen().catch(()=>{});
+  }
+
+  btn.addEventListener('click', startPrank);
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') stopPrank();
+  });
+
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement && running) stopPrank();
+  });
+
+  preloadAudio();
+})();
+</script>
+</body>
+</html>
